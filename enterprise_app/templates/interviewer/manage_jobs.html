@@ -1,0 +1,46 @@
+{% extends "layouts/base.html" %}
+{% block title %}Manage Job Postings{% endblock %}
+
+{% block content %}
+<div class="header-with-action">
+    <h1>Manage Job Postings</h1>
+    <a href="{{ url_for('interviewer.create_job') }}" class="btn btn-primary" title="Create new job posting"><i data-feather="plus"></i> Create New Job</a>
+</div>
+
+<div class="card">
+    <table class="table table-striped" role="table" aria-label="Job postings table">
+        <thead>
+            <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Department</th>
+                <th scope="col">Type</th>
+                <th scope="col">Status</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for job in jobs %}
+            <tr>
+                <td>{{ job.title }}</td>
+                <td>{{ job.department }}</td>
+                <td>{{ job.job_type }}</td>
+                <td><span class="badge">{{ job.status }}</span></td>
+                <td>
+                    <a href="{{ url_for('interviewer.edit_job', job_id=job._id) }}" class="btn btn-secondary btn-sm" title="Edit this job"><i data-feather="edit"></i> Edit</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" role="alert" aria-live="polite">No job postings found. Create one to get started!</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% if total_pages > 1 %}
+    <nav aria-label="Pagination for jobs">
+        <a href="?page={{ page - 1 }}" {% if page == 1 %}aria-disabled="true" class="disabled"{% endif %}>Previous</a>
+        <a href="?page={{ page + 1 }}" {% if page == total_pages %}aria-disabled="true" class="disabled"{% endif %}>Next</a>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

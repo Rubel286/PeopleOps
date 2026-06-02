@@ -1,0 +1,45 @@
+{% extends "layouts/base.html" %}
+{% block title %}Submit a Grievance{% endblock %}
+{% block content %}
+<div class="form-container">
+    <div class="card" style="max-width: 600px; margin: 0 auto; padding: 2rem;">
+        <h1 style="font-size: 1.5rem; margin-bottom: 0.5rem; font-weight: 600;">Workplace Support / Grievance Portal</h1>
+        <p style="color: #6b7280; margin-bottom: 1.5rem;">Select whether this is a standard IT/HR request or a highly confidential anonymous grievance.</p>
+        <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="form-group mb-3">
+                <label for="submission_type" style="font-weight: 500; margin-bottom: 0.5rem; display: block;">Submission Track</label>
+                <select id="submission_type" name="submission_type" class="form-control" required onchange="toggleConfidentiality(this)">
+                    <option value="Standard IT/HR Support">Standard System Support (Named)</option>
+                    <option value="Confidential Grievance">Confidential HR Grievance (Anonymous)</option>
+                </select>
+                <small id="conf-notice" class="form-text" style="color: #10b981; font-weight: 500; display: block; margin-top: 0.5rem;">
+                    &#10003; Standard Delivery: IT/HR will receive your Identity to follow up on your request quickly.
+                </small>
+            </div>
+            <div class="form-group mb-3">
+                <label for="title" style="font-weight: 500; margin-bottom: 0.5rem; display: block;"><i data-feather="edit-2" style="width: 16px; height: 16px; margin-right: 5px;"></i> Subject</label>
+                <input type="text" id="title" name="title" class="form-control" required placeholder="e.g. WiFi Dropping, Office Conditions...">
+            </div>
+            <div class="form-group mb-4">
+                <label for="description" style="font-weight: 500; margin-bottom: 0.5rem; display: block;"><i data-feather="file-text" style="width: 16px; height: 16px; margin-right: 5px;"></i> Description</label>
+                <textarea id="description" name="description" class="form-control" rows="8" required placeholder="Explain your issue thoroughly..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;"><i data-feather="send" style="width: 16px; height: 16px; margin-right: 5px;"></i> Submit Report</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function toggleConfidentiality(select) {
+        const notice = document.getElementById("conf-notice");
+        if (select.value === "Confidential Grievance") {
+            notice.style.color = "#ef4444";
+            notice.innerHTML = "&#9888; Maximum Privacy: Your identity and email will be completely completely scrubbed before this reaches HR.";
+        } else {
+            notice.style.color = "#10b981";
+            notice.innerHTML = "&#10003; Standard Delivery: IT/HR will receive your Identity to follow up on your request quickly.";
+        }
+    }
+</script>
+{% endblock %}

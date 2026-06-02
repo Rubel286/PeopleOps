@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Update on Your Leave Request</title>
+</head>
+<body>
+    <p>Dear {{ name }},</p>
+    
+    {% if decision == 'Approved' %}
+        <p>
+            This is to confirm that your leave request for the period of <strong>{{ start_date }} to {{ end_date }}</strong> has been <strong>approved</strong>.
+        </p>
+        <p>
+            The requested {{ days }} days have been deducted from your leave balance.
+        </p>
+    {% else %}
+        <p>
+            This is to inform you that your leave request for the period of <strong>{{ start_date }} to {{ end_date }}</strong> has been <strong>denied</strong>.
+        </p>
+        <p>
+            Please contact HR or your manager for more details.
+        </p>
+    {% endif %}
+    
+    <p>
+        Sincerely,<br>
+        HR Department
+    </p>
+</body>
+</html>

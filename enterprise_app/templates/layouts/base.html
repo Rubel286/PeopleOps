@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}RecruitAI{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v={{ range(1, 100000) | random }}">
+    <script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body>
+
+    {% set active_role = current_user.role if current_user.is_authenticated else None %}
+    {% if current_user.is_authenticated and active_role in ['admin', 'employee'] %}
+    <!-- Demo Sandbox Header -->
+    <div style="background: rgba(245, 158, 11, 0.1); border-bottom: 1px solid rgba(245, 158, 11, 0.2); color: #f59e0b; padding: 0.75rem; text-align: center; font-size: 0.85rem; font-weight: 600; position: sticky; top: 0; z-index: 1000; display: flex; justify-content: center; align-items: center; gap: 1.5rem;">
+        <span><i data-feather="terminal" style="width:14px; height:14px; margin-right:4px; vertical-align:middle;"></i> Sandbox Active: <strong>{{ active_role|upper }}</strong></span>
+        {% if active_role == 'admin' %}
+        <a href="{{ url_for('main.switch_role', role='employee') }}" style="color: #d97706; text-decoration: underline;">Switch to Employee View</a>
+        {% else %}
+        <a href="{{ url_for('main.switch_role', role='admin') }}" style="color: #d97706; text-decoration: underline;">Restore Admin View</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% if current_user.is_authenticated and active_role in ['admin', 'employee'] %}
+    <div class="dashboard-grid">
+        <aside class="sidebar">
+            <a href="{{ url_for('main.index') }}" class="sidebar-brand">RecruitAI</a>
+            <nav class="sidebar-nav">
+                {% if current_user.role == 'admin' %}
+                    <a href="{{ url_for('interviewer.dashboard') }}"><i data-feather="home"></i> Dashboard</a>
+                    <a href="{{ url_for('interviewer.manage_jobs') }}"><i data-feather="briefcase"></i> Manage Jobs</a>
+                    <a href="{{ url_for('employee.directory') }}"><i data-feather="users"></i> Employee Directory</a>
+                    <a href="{{ url_for('analytics.dashboard') }}"><i data-feather="bar-chart-2"></i> Analytics</a>
+                    
+                    <!-- NEW: Payroll & Performance links for admin -->
+                    <a href="{{ url_for('finance.admin_dashboard') }}"><i data-feather="dollar-sign"></i> Finance</a>
+                    <a href="{{ url_for('performance.admin_performance_dashboard') }}"><i data-feather="star"></i> Performance</a>
+                    
+                {% elif current_user.role == 'employee' %}
+                    <a href="{{ url_for('employee_portal.dashboard') }}"><i data-feather="home"></i> My Dashboard</a>
+                    <a href="{{ url_for('document.library') }}"><i data-feather="folder"></i> Documents</a>
+                    <a href="{{ url_for('employee_portal.submit_grievance') }}"><i data-feather="alert-triangle"></i> Submit Grievance</a>
+                    
+                    <!-- NEW: Payroll & Performance links for employee -->
+                    <a href="{{ url_for('finance.employee_dashboard') }}"><i data-feather="dollar-sign"></i> My Payslips</a>
+                    <a href="{{ url_for('performance.view_history') }}"><i data-feather="star"></i> My Performance</a>
+                {% endif %}
+                <a href="{{ url_for('auth.logout') }}"><i data-feather="log-out"></i> Logout</a>
+            </nav>
+        </aside>
+        <main class="main-content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- AI Chatbot Floating Widget -->
+    <div id="ai-chatbot-widget" style="position: fixed; bottom: 30px; right: 30px; z-index: 9999; font-family: sans-serif;">
+        <div id="chatbot-window" style="display: none; width: 350px; height: 500px; background: white; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); flex-direction: column; overflow: hidden; border: 1px solid #e5e7eb; margin-bottom:  15px;">
+            <div style="background: #2563eb; color: white; padding: 15px; font-weight: 600; display: flex; justify-content: space-between; align-items: center;">
+                <span><i data-feather="cpu" style="width:16px; height:16px; margin-right:5px;"></i> Enterprise AI Assistant</span>
+                <button onclick="document.getElementById('chatbot-window').style.display='none'" style="background:none; border:none; color:white; cursor:pointer;"><i data-feather="x"></i></button>
+            </div>
+            <div id="chatbot-messages" style="flex: 1; padding: 15px; overflow-y: auto; background: #f9fafb; display: flex; flex-direction: column; gap: 10px;">
+                <div style="background: #e5e7eb; color: #1f2937; padding: 10px 14px; border-radius: 12px 12px 12px 0; align-self: flex-start; max-width: 85%; font-size: 0.9rem;">
+                    Hello! I'm your AI HR Assistant. How can I help you today?
+                </div>
+            </div>
+            <div style="padding: 15px; background: white; border-top: 1px solid #e5e7eb; display: flex; gap: 10px;">
+                <input type="text" id="chatbot-input" placeholder="Type your message..." style="flex: 1; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; outline: none; font-size: 0.9rem;" onkeypress="if(event.key === 'Enter') sendChatMessage()">
+                <button onclick="sendChatMessage()" style="background: #2563eb; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer;"><i data-feather="send" style="width:16px; height:16px;"></i></button>
+            </div>
+        </div>
+        <button onclick="toggleChatbot()" style="background: #2563eb; color: white; border: none; width: 60px; height: 60px; border-radius: 50%; box-shadow: 0 5px 15px rgba(37, 99, 235, 0.4); cursor: pointer; display: flex; align-items: center; justify-content: center; margin-left: auto;">
+            <i data-feather="message-circle" style="width: 28px; height: 28px;"></i>
+        </button>
+    </div>
+
+    <script>
+        function toggleChatbot() {
+            const window = document.getElementById('chatbot-window');
+            window.style.display = window.style.display === 'none' ? 'flex' : 'none';
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById('chatbot-input');
+            const message = input.value.trim();
+            if (!message) return;
+
+            const messagesDiv = document.getElementById('chatbot-messages');
+            
+            // Add user message
+            messagesDiv.innerHTML += `
+                <div style="background: #2563eb; color: white; padding: 10px 14px; border-radius: 12px 12px 0 12px; align-self: flex-end; max-width: 85%; font-size: 0.9rem;">
+                    ${message}
+                </div>`;
+            
+            input.value = '';
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+            try {
+                const response = await fetch('/api/chat/', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ message: message })
+                });
+                
+                const data = await response.json();
+                
+                if (data.type === 'command' && data.payload.command === 'redirect') {
+                    window.location.href = data.payload.url;
+                } else {
+                    const reply = data.reply || data.error || 'Unknown error occurred.';
+                    messagesDiv.innerHTML += `
+                        <div style="background: #e5e7eb; color: #1f2937; padding: 10px 14px; border-radius: 12px 12px 12px 0; align-self: flex-start; max-width: 85%; font-size: 0.9rem;">
+                            ${reply}
+                        </div>`;
+                }
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            } catch (err) {
+                console.error('Chat error:', err);
+            }
+        }
+    </script>
+    
+    {% else %}
+        <nav class="navbar">
+            <a class="nav-brand" href="{{ url_for('main.index') }}">RecruitAI</a>
+            <div class="nav-links">
+                <a href="{{ url_for('main.job_listings') }}">Jobs</a>
+                <a href="{{ url_for('auth.login') }}">Login</a>
+                <a href="{{ url_for('auth.signup') }}">Sign Up</a>
+            </div>
+        </nav>
+        <main class="public-view">
+             {% block public_content %}{% endblock %}
+        </main>
+    {% endif %}
+
+    <div class="flash-container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} show">
+                    {{ message }}
+                    <button type="button" class="close-alert" onclick="this.parentElement.classList.remove('show');">&times;</button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Feather Icons
+        feather.replace();
+
+        // Handle hiding flash messages
+        const alerts = document.querySelectorAll('.alert.show');
+        alerts.forEach((alert) => {
+            setTimeout(() => {
+                alert.classList.remove('show');
+            }, 5000); // Hide after 5 seconds
+        });
+    });
+</script>
+</body>
+</html>

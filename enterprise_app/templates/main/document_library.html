@@ -1,0 +1,35 @@
+{% extends "layouts/base.html" %}
+{% block title %}Document Library{% endblock %}
+
+{% block content %}
+<h1>Company Document Library</h1>
+<p>Find official company documents, reports, and handbooks here.</p>
+
+<div class="card">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Document Name</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for doc in documents %}
+            <tr>
+                <td><strong>{{ doc.display_name }}</strong></td>
+                <td>{{ doc.description }}</td>
+                <td>
+                    <a href="{{ url_for('document.view_document', doc_id=doc._id) }}" target="_blank" class="btn btn-secondary btn-sm">View</a>
+                    <a href="{{ url_for('document.download_document', doc_id=doc._id) }}" class="btn btn-primary btn-sm">Download</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="3">No documents are currently available to you.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "layouts/base.html" %}
+{% block title %}Sign Up{% endblock %}
+{% block public_content %}
+<div class="auth-container">
+    <div class="card">
+        <h2>Create an Account</h2>
+        <p>Sign up to apply for jobs and track your application status.</p>
+        <form method="POST" action="{{ url_for('auth.signup') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="form-group">
+                <label for="name"><i data-feather="user"></i> Full Name</label>
+                <input type="text" id="name" name="name" class="form-control" required aria-required="true" title="Enter your full name">
+            </div>
+            <div class="form-group">
+                <label for="email"><i data-feather="mail"></i> Email</label>
+                <input type="email" id="email" name="email" class="form-control" required aria-required="true" title="Enter your email">
+            </div>
+            <div class="form-group">
+                <label for="password"><i data-feather="lock"></i> Password</label>
+                <input type="password" id="password" name="password" class="form-control" required aria-required="true" title="Enter a password">
+            </div>
+            <div class="form-group">
+                <label for="confirm_password"><i data-feather="lock"></i> Confirm Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" class="form-control" required aria-required="true" title="Confirm your password">
+            </div>
+            <button type="submit" class="btn btn-primary btn-full"><i data-feather="user-plus"></i> Sign Up</button>
+        </form>
+        <p class="auth-link">Already have an account? <a href="{{ url_for('auth.login') }}" title="Log in to existing account">Log In</a></p>
+    </div>
+</div>
+{% endblock %}

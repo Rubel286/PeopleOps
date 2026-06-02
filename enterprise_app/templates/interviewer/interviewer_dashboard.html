@@ -1,0 +1,152 @@
+{% extends "layouts/base.html" %}
+{% from "macros/_pagination.html" import render_pagination %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="header-with-action">
+    <div>
+        <h1>Admin Dashboard</h1>
+        <p style="margin:0; color: #6b7280;">Welcome back, {{ employee.name }}!</p>
+        <p id="dashboard-clock" style="color: #6366f1; font-family: monospace; font-weight: 500; font-size: 0.95rem; margin-top: 4px;"></p>
+    </div>
+    <a href="{{ url_for('interviewer.create_job') }}" class="btn btn-primary"><i data-feather="plus"></i> Create New Job</a>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const clockEl = document.getElementById('dashboard-clock');
+        function updateClock() {
+            const now = new Date();
+            clockEl.textContent = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) + ", " + now.toLocaleTimeString('en-US');
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
+    });
+</script>
+
+<div class="stat-grid">
+    <a href="{{ url_for('interviewer.grievances') }}" class="card stat-card" style="text-decoration: none; color: inherit; transition: transform 0.2s;">
+        <div class="stat-icon success" style="background: #fee2e2; color: #ef4444;"><i data-feather="alert-triangle"></i></div>
+        <div>
+            <div class="stat-number">{{ recent_grievances|length }}</div>
+            <div class="stat-label">Pending Grievances</div>
+        </div>
+    </a>
+    <a href="{{ url_for('interviewer.leave_requests') }}" class="card stat-card" style="text-decoration: none; color: inherit; transition: transform 0.2s;">
+        <div class="stat-icon warning"><i data-feather="clock"></i></div>
+        <div>
+            <div class="stat-number">{{ pending_leave_count }}</div>
+            <div class="stat-label">Pending Leave Requests</div>
+        </div>
+    </a>
+    <a href="{{ url_for('interviewer.employees_on_leave') }}" class="card stat-card" style="text-decoration: none; color: inherit; transition: transform 0.2s;">
+        <div class="stat-icon primary"><i data-feather="users"></i></div>
+        <div>
+            <div class="stat-number">{{ employees_on_leave|length }}</div>
+            <div class="stat-label">Employees on Leave Today</div>
+        </div>
+    </a>
+</div>
+
+<div class="card">
+    <h3>Candidate Pipeline</h3>
+    <div class="tabs">
+        <div class="tab-link active" onclick="openTab(event, 'applied')">New Applications ({{ applied|length }})</div>
+        <div class="tab-link" onclick="openTab(event, 'shortlisted')">Shortlisted ({{ shortlisted|length }})</div>
+        <div class="tab-link" onclick="openTab(event, 'interviews')">Upcoming Interviews ({{ agenda|length }})</div>
+    </div>
+    
+    <form action="{{ url_for('interviewer.dashboard') }}" method="get" class="mb-3">
+        <input type="text" name="search" value="{{ request.args.get('search', '') }}" placeholder="Search by name or role" class="form-control d-inline-block w-50">
+        <button type="submit" class="btn btn-primary">Search</button>
+        {% if request.args.get('search') %}
+        <a href="{{ url_for('interviewer.dashboard') }}" class="btn btn-secondary">Clear Search</a>
+        {% endif %}
+    </form>
+
+    <div id="applied" class="tab-content active">
+        <div class="pipeline-grid">
+            {% for c in applied %}
+            <a href="{{ url_for('interviewer.candidate_profile', applicant_id=c._id) }}" class="card-link" title="View profile of {{ c.name }}">
+                <div class="card candidate-card">
+                    <h4>{{ c.name }}</h4>
+                    <p>{{ c.role_applied_for }}</p>
+                    <div class="match-score" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                        <span>Match Score: <strong>{{ c.match_score if c.match_score > 0 else 'N/A' }}%</strong></span>
+                        {% if c.ai_interview_score is defined and c.ai_interview_score is not none %}
+                        <span style="font-size: 0.85rem; background: #2563eb; color: white; padding: 2px 8px; border-radius: 12px; font-weight: 600;">AI: {{ c.ai_interview_score }}%</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </a>
+            {% else %}
+            <p>No new applications.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div id="shortlisted" class="tab-content">
+        <div class="pipeline-grid">
+            {% for c in shortlisted %}
+            <a href="{{ url_for('interviewer.candidate_profile', applicant_id=c._id) }}" class="card-link" title="View profile of {{ c.name }}">
+                <div class="card candidate-card">
+                    <h4>{{ c.name }}</h4>
+                    <p>{{ c.role_applied_for }}</p>
+                    <div class="match-score" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                        <span>Match Score: <strong>{{ c.match_score if c.match_score > 0 else 'N/A' }}%</strong></span>
+                        {% if c.ai_interview_score is defined and c.ai_interview_score is not none %}
+                        <span style="font-size: 0.85rem; background: #2563eb; color: white; padding: 2px 8px; border-radius: 12px; font-weight: 600;">AI: {{ c.ai_interview_score }}%</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </a>
+            {% else %}
+            <p>No shortlisted candidates.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div id="interviews" class="tab-content">
+        <div class="pipeline-grid">
+            {% for c in agenda %}
+            <a href="{{ url_for('interviewer.candidate_profile', applicant_id=c._id) }}" class="card-link" title="View profile of {{ c.name }}">
+                <div class="card candidate-card">
+                    <h4>{{ c.name }}</h4>
+                    <p>{{ c.role_applied_for }}</p>
+                    {% for activity in c.activity %}
+                    {% if activity.type == 'interview' %}
+                    <p><strong>Interview:</strong> {{ activity.interview_date|format_datetime }}</p>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </a>
+            {% else %}
+            <p>No upcoming interviews.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+function openTab(evt, tabName) {
+    let i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+        tabcontent[i].classList.remove("active");
+    }
+    tablinks = document.getElementsByClassName("tab-link");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].classList.remove("active");
+    }
+    document.getElementById(tabName).style.display = "block";
+    document.getElementById(tabName).classList.add("active");
+    evt.currentTarget.classList.add("active");
+}
+// Set the first tab as active on page load
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelector('.tab-link.active').click();
+});
+</script>
+
+{% endblock %}

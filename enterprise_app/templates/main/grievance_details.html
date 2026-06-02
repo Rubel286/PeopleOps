@@ -1,0 +1,59 @@
+{% extends "layouts/base.html" %}
+{% block title %}Grievance Details{% endblock %}
+{% block content %}
+<div class="header-with-action">
+    <h1>Grievance Details</h1>
+    <a href="{{ url_for('interviewer.manage_grievances') }}" class="btn btn-secondary">Back to All Grievances</a>
+</div>
+
+<div class="card">
+    <div class="grievance-detail-grid">
+        <div>
+            <h4>Submitted By</h4>
+            <p>{{ grievance.employee_name }}</p>
+        </div>
+        <div>
+            <h4>Date Submitted</h4>
+            <p>{{ grievance.timestamp | format_datetime }}</p>
+        </div>
+        <div>
+            <h4>Grievance Type</h4>
+            <p>{{ grievance.type }}</p>
+        </div>
+        <div>
+            <h4>Current Status</h4>
+            <p><span class="badge">{{ grievance.status }}</span></p>
+        </div>
+    </div>
+    <hr>
+    <h4>Full Details</h4>
+    <div class="grievance-details-box">
+        <p>{{ grievance.details }}</p>
+    </div>
+</div>
+
+<style>
+    .grievance-detail-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+    .grievance-detail-grid h4 {
+        margin-bottom: 5px;
+        color: var(--secondary-color);
+        font-size: 0.9rem;
+    }
+    .grievance-detail-grid p {
+        font-size: 1.1rem;
+        font-weight: 500;
+        margin: 0;
+    }
+    .grievance-details-box {
+        background-color: var(--background-color);
+        padding: 20px;
+        border-radius: 5px;
+        white-space: pre-wrap; /* Preserves formatting like line breaks */
+    }
+</style>
+{% endblock %}

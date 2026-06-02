@@ -1,0 +1,11 @@
+{% macro render_pagination(page, total_pages, endpoint) %}
+<div class="pagination">
+    <a href="{{ url_for(endpoint, page=page - 1) }}" class="btn btn-secondary {% if page == 1 %}disabled{% endif %}">
+        &larr; Previous
+    </a>
+    <span class="page-info">Page {{ page }} of {{ total_pages }}</span>
+    <a href="{{ url_for(endpoint, page=page + 1) }}" class="btn btn-secondary {% if page == total_pages %}disabled{% endif %}">
+        Next &rarr;
+    </a>
+</div>
+{% endmacro %}

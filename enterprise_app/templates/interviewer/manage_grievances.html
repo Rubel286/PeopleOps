@@ -1,0 +1,32 @@
+{% extends "layouts/base.html" %}
+{% block title %}Manage Grievances{% endblock %}
+{% block content %}
+<h1>Confidential Grievance Submissions</h1>
+<p>Review and manage all confidential submissions from employees.</p>
+<div class="card">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Employee</th>
+                <th>Type</th>
+                <th>Date Submitted</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for g in grievances %}
+            <tr>
+                <td>{{ g.employee_name }}</td>
+                <td>{{ g.type }}</td>
+                <td>{{ g.timestamp | format_datetime }}</td>
+                <td><span class="badge">{{ g.status }}</span></td>
+                <td><a href="{{ url_for('interviewer.grievance_details', grievance_id=g._id) }}" class="btn btn-secondary btn-sm">View Details</a></td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5">No grievances have been submitted.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

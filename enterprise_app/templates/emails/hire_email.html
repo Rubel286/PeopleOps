@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Congratulations on Your Offer</title>
+</head>
+<body>
+    <p>Dear {{ name }},</p>
+    <p>
+        Following our recent interview process, we are thrilled to extend an offer to you for the <strong>{{ role }}</strong> position at our company!
+    </p>
+    <p>
+        We were thoroughly impressed with your skills and experience, and we are confident that you will be a valuable asset to our team.
+    </p>
+    <p>
+        To begin the final steps, please complete your onboarding process by following the link below:
+    </p>
+    <p>
+        <a href="{{ url_for('onboarding.portal', applicant_id=applicant_id, token=token, _external=True) }}">Start Your Onboarding Process</a>
+    </p>
+    <p>
+        We look forward to welcoming you to the team!<br>
+        Sincerely,<br>
+        The Recruitment Team
+    </p>
+</body>
+</html>

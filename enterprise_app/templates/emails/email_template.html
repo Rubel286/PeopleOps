@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Application Update</title>
+</head>
+<body>
+    <p>Dear {{ name }},</p>
+    <p>
+        Thank you for your interest in the {{ role }} position at our company.
+    </p>
+    {% if decision == 'shortlist' %}
+        <p>
+            We are pleased to inform you that your application has been <strong>shortlisted</strong>. We will be in touch with you shortly regarding the next steps in the interview process.
+        </p>
+    {% else %}
+        <p>
+            After careful consideration, we regret to inform you that we will not be moving forward with your application at this time. We wish you the best of luck in your job search.
+        </p>
+    {% endif %}
+    <p>
+        Sincerely,<br>
+        The Recruitment Team
+    </p>
+</body>
+</html>

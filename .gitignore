@@ -1,0 +1,7 @@
+.env
+venv_enterprise/
+uploads/
+mail_output/
+resumes/
+__pycache__/
+*.py[cod]

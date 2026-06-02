@@ -1,0 +1,23 @@
+{% extends "layouts/base.html" %}
+{% block title %}Admin Log In{% endblock %}
+
+{% block public_content %}
+<div class="auth-container">
+    <div class="card">
+      <h2>Admin Portal Login</h2>
+      <p>Please enter your administrator credentials.</p>
+      <form method="POST" action="{{ url_for('auth.admin_login') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" name="password" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Log In</button>
+      </form>
+    </div>
+</div>
+{% endblock %}

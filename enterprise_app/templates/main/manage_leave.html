@@ -1,0 +1,49 @@
+{% extends "layouts/base.html" %}
+{% block title %}Manage Leave Requests{% endblock %}
+{% block content %}
+<h1>Manage Leave Requests</h1>
+<p>Review and action all pending employee time off requests.</p>
+<div class="card">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Employee</th>
+                <th>Dates Requested</th>
+                <th>Days</th>
+                <th>Remaining Balance</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for req in requests %}
+            <tr>
+                <td>{{ req.employee_name }}</td>
+                <td>{{ req.start_date | format_datetime('%b %d') }} - {{ req.end_date | format_datetime('%b %d, %Y') }}</td>
+                <td>{{ req.days }}</td>
+                <td>
+                    {% if req.leave_balance < req.days %}
+                        <span class="badge status-denied">{{ req.leave_balance }} (Not Enough)</span>
+                    {% else %}
+                        {{ req.leave_balance }}
+                    {% endif %}
+                </td>
+                <td>
+                    <form action="{{ url_for('interviewer.action_leave', request_id=req._id) }}" method="POST" style="display:inline-block;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" name="decision" value="Approve" class="btn btn-success btn-sm">Approve</button>
+                    </form>
+                    <form action="{{ url_for('interviewer.action_leave', request_id=req._id) }}" method="POST" style="display:inline-block;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" name="decision" value="Deny" class="btn btn-danger btn-sm">Deny</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5">No pending leave requests.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

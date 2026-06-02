@@ -1,0 +1,50 @@
+{% extends "layouts/base.html" %}
+{% block title %}Appraisal Engine{% endblock %}
+
+{% block content %}
+<div class="header-with-action">
+    <div>
+        <h1>Deterministic Appraisal Engine</h1>
+        <p style="margin:0; color: #6b7280;">Run AI-driven performance evaluations across all departments.</p>
+    </div>
+</div>
+
+<div class="card">
+    <h3>Pending Appraisals ({{ pending_count }})</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Employee</th>
+                <th>Department</th>
+                <th>Performance Score</th>
+                <th>Suggested Hike (%)</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for a in appraisals %}
+            <tr>
+                <td>{{ a.name }}</td>
+                <td>{{ a.department }}</td>
+                <td>{{ a.overall_score }} / 5.0</td>
+                <td><strong style="color: #10b981;">+{{ a.suggested_hike }}%</strong></td>
+                <td>
+                    <form action="{{ url_for('finance.approve_appraisal') }}" method="POST" style="margin:0;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="employee_id" value="{{ a.employee_id }}">
+                        <input type="hidden" name="new_salary" value="{{ a.new_salary }}">
+                        <input type="hidden" name="hike_percent" value="{{ a.suggested_hike }}">
+                        <input type="hidden" name="justification" value="Deterministically evaluated.">
+                        <button type="submit" class="btn btn-primary btn-sm">Approve</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" class="text-center">No pending appraisals to review.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

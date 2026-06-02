@@ -1,0 +1,20 @@
+{% extends "layouts/base.html" %}
+{% block title %}Assign Task to {{ mentee.name }}{% endblock %}
+{% block content %}
+<h1>Assign Task to {{ mentee.name }}</h1>
+<div class="card">
+    <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="form-group">
+            <label>Task Title</label>
+            <input type="text" name="task_title" class="form-control" required placeholder="e.g., 'Complete the onboarding tutorial'">
+        </div>
+        <div class="form-group">
+            <label>Description (Optional)</label>
+            <textarea name="task_description" class="form-control" rows="4" placeholder="Add more details about the task..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Assign Task</button>
+        <a href="{{ url_for('employee_portal.dashboard') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

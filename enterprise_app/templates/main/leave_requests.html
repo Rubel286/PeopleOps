@@ -1,0 +1,70 @@
+{% extends "layouts/base.html" %}
+{% block title %}Leave Requests{% endblock %}
+
+{% block content %}
+<h1>Manage Leave Requests</h1>
+<p>Review and action all pending employee time off requests.</p>
+<div class="card">
+    <table class="table table-striped" role="table" aria-label="Leave requests table">
+        <thead>
+            <tr>
+                <th scope="col">Employee</th>
+                <th scope="col">Dates Requested</th>
+                <th scope="col">Days</th>
+                <th scope="col">Remaining Balance</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for req in leave_requests %}
+            <tr>
+                <td>{{ req.employee_name }}</td>
+                <td>{{ req.start_date | format_datetime('%b %d') }} - {{ req.end_date | format_datetime('%b %d, %Y') }}</td>
+                <td>{{ req.days }}</td>
+                <td>
+                    {% if req.balance < req.days %}
+                        <span class="badge status-denied">{{ req.balance }} (Not Enough)</span>
+                    {% else %}
+                        {{ req.balance }}
+                    {% endif %}
+                </td>
+                <td>
+                    <button onclick="document.getElementById('approveModal{{ req._id }}').style.display='block'" class="btn btn-success btn-sm" title="Approve leave"><i data-feather="check"></i> Approve</button>
+                    <div id="approveModal{{ req._id }}" class="modal">
+                        <div class="modal-content">
+                            <span class="close" onclick="document.getElementById('approveModal{{ req._id }}').style.display='none'">&times;</span>
+                            <p>Approve leave for {{ req.employee_name }}?</p>
+                            <form action="{{ url_for('interviewer.approve_leave', leave_id=req._id) }}" method="POST">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-success">Yes</button>
+                            </form>
+                        </div>
+                    </div>
+                    <button onclick="document.getElementById('denyModal{{ req._id }}').style.display='block'" class="btn btn-danger btn-sm" title="Deny leave"><i data-feather="x"></i> Deny</button>
+                    <div id="denyModal{{ req._id }}" class="modal">
+                        <div class="modal-content">
+                            <span class="close" onclick="document.getElementById('denyModal{{ req._id }}').style.display='none'">&times;</span>
+                            <p>Deny leave for {{ req.employee_name }}?</p>
+                            <form action="{{ url_for('interviewer.deny_leave', leave_id=req._id) }}" method="POST">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-danger">Yes</button>
+                            </form>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" role="alert" aria-live="polite">No pending leave requests.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% if total_pages > 1 %}
+    <nav aria-label="Pagination for leave requests">
+        <a href="?page={{ page - 1 }}" {% if page == 1 %}aria-disabled="true" class="disabled"{% endif %}>Previous</a>
+        <a href="?page={{ page + 1 }}" {% if page == total_pages %}aria-disabled="true" class="disabled"{% endif %}>Next</a>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

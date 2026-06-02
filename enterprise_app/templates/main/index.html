@@ -1,0 +1,43 @@
+{% extends "layouts/base.html" %}
+{% block title %}RecruitAI - Home{% endblock %}
+
+{% block public_content %}
+<div class="hero-section" role="banner" aria-label="Hero section">
+    <div class="hero-content">
+        <h1>Welcome to RecruitAI</h1>
+        <p>Streamlining recruitment and employee management with AI-powered tools.</p>
+        <div class="hero-actions">
+            <a href="{{ url_for('main.job_listings') }}" class="btn btn-primary btn-lg" title="View available job positions"><i data-feather="briefcase"></i> View Open Positions</a>
+            <a href="{{ url_for('auth.login') }}" class="btn btn-secondary btn-lg" title="Login for employees"><i data-feather="log-in"></i> Employee Login</a>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<section class="features" data-aos="fade-up" data-aos-delay="200" role="region" aria-label="Features">
+    <div class="feature-card">
+        <i data-feather="cpu"></i>
+        <h3>AI-Powered Analysis</h3>
+        <p>Our model intelligently categorizes resumes and extracts key skills, saving you hours of manual review.</p>
+    </div>
+    <div class="feature-card">
+        <i data-feather="users"></i>
+        <h3>Seamless Workflow</h3>
+        <p>Manage candidates, track interviews, and collaborate with your team all in one centralized dashboard.</p>
+    </div>
+    <div class="feature-card">
+        <i data-feather="briefcase"></i>
+        <h3>Complete HR Hub</h3>
+        <p>From recruitment and employee directories to leave management, RecruitAI is your all-in-one HR solution.</p>
+    </div>
+</section>
+
+<!-- Why Join Us Section -->
+<section class="cta-section" data-aos="zoom-in" role="region" aria-label="Call to action">
+    <div class="cta-content">
+        <h2>Ready to build the future with us?</h2>
+        <p>We are a passionate team dedicated to innovation and excellence. Find the role that's right for you and start your journey with RecruitAI today.</p>
+        <a href="{{ url_for('main.job_listings') }}" class="btn btn-primary btn-lg" title="Join our team"><i data-feather="arrow-right"></i> Join Our Team</a>
+    </div>
+</section>
+{% endblock %}

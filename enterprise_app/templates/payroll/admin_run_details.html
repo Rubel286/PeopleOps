@@ -1,0 +1,57 @@
+{% extends "layouts/base.html" %}
+{% block title %}Payroll Run Details{% endblock %}
+
+{% block content %}
+<div class="card" style="margin-bottom: 20px;">
+    <div class="card-body">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e5e7eb; padding-bottom: 15px; margin-bottom: 15px;">
+            <h2 style="margin: 0;">Payroll Ledger: {{ run.period }}</h2>
+            <a href="{{ url_for('finance.admin_dashboard') }}" class="btn btn-outline-secondary">Back to Hub</a>
+        </div>
+        
+        <div style="display: flex; gap: 30px; margin-bottom: 25px;">
+            <div>
+                <p style="color: #6b7280; margin: 0; font-size: 0.9rem;">Status</p>
+                <h4 style="margin: 0; color: {% if run.status == 'Processed' %}#10b981{% else %}#f59e0b{% endif %};">{{ run.status }}</h4>
+            </div>
+            <div>
+                <p style="color: #6b7280; margin: 0; font-size: 0.9rem;">Total Disbursement</p>
+                <h4 style="margin: 0;">&#8377;{{ '{:,.2f}'.format(run.total_payout) }}</h4>
+            </div>
+            <div>
+                <p style="color: #6b7280; margin: 0; font-size: 0.9rem;">Records Processed</p>
+                <h4 style="margin: 0;">{{ run.processed }}</h4>
+            </div>
+        </div>
+
+        <table class="table" style="width: 100%; border-collapse: collapse;">
+            <thead style="background: #f9fafb;">
+                <tr>
+                    <th style="padding: 12px; text-align: left;">Employee ID</th>
+                    <th style="padding: 12px; text-align: left;">Base Salary</th>
+                    <th style="padding: 12px; text-align: left;">Bonus</th>
+                    <th style="padding: 12px; text-align: left;">Deductions</th>
+                    <th style="padding: 12px; text-align: left;">Tax</th>
+                    <th style="padding: 12px; text-align: left;">Net Pay</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in payslips %}
+                <tr style="border-bottom: 1px solid #e5e7eb;">
+                    <td style="padding: 12px; font-family: monospace;">{{ p.employee_id }}</td>
+                    <td style="padding: 12px;">&#8377;{{ '{:,.2f}'.format(p.breakdown.base_salary if p.breakdown else p.base_salary) }}</td>
+                    <td style="padding: 12px;">&#8377;{{ '{:,.2f}'.format(p.breakdown.bonus if p.breakdown else 0) }}</td>
+                    <td style="padding: 12px;">&#8377;{{ '{:,.2f}'.format(p.breakdown.deductions if p.breakdown else 0) }}</td>
+                    <td style="padding: 12px;">&#8377;{{ '{:,.2f}'.format(p.breakdown.tax if p.breakdown else 0) }}</td>
+                    <td style="padding: 12px; font-weight: bold; color: #111827;">&#8377;{{ '{:,.2f}'.format(p.net_pay) }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" style="padding: 20px; text-align: center; color: #6b7280;">No transaction records found for this period.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

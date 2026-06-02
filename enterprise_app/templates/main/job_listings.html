@@ -1,0 +1,23 @@
+{% extends "layouts/base.html" %}
+{% block title %}Job Openings{% endblock %}
+
+{% block public_content %}
+<div class="job-listings-header" role="banner" aria-label="Job listings header">
+  <h1>Join Our Team</h1>
+  <p>We're always looking for talented individuals to help us build the future. Explore our open positions below.</p>
+</div>
+
+<div class="job-grid" role="list" aria-label="Job openings list">
+  {% for job in jobs %}
+    <div class="card job-card" role="listitem">
+      <span class="badge">{{ job.department }}</span>
+      <h3>{{ job.title }}</h3>
+      <p class="job-location">{{ job.location }} | {{ job.job_type }}</p>
+      <p class="job-description">{{ job.description[:120] }}...</p>
+      <a href="{{ url_for('main.apply_form', job_id=job._id) }}" class="btn btn-primary" title="Apply for {{ job.title }}"><i data-feather="send"></i> Apply Now</a>
+    </div>
+  {% else %}
+    <p role="alert" aria-live="polite">There are no job openings at this time. Please check back later!</p>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends "layouts/base.html" %}
+{% block title %}{{ action }} Job{% endblock %}
+
+{% block content %}
+<div class="header-with-action">
+    <h1>{{ action }} Job</h1>
+    {% if job %}
+    <button onclick="document.getElementById('deleteModal').style.display='block'" class="btn btn-danger">Delete Posting</button>
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('deleteModal').style.display='none'">&times;</span>
+            <p>Are you sure you want to delete this job posting?</p>
+            <form action="{{ url_for('interviewer.delete_job', job_id=job._id) }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                <button type="button" class="btn btn-secondary" onclick="document.getElementById('deleteModal').style.display='none'">Cancel</button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<div class="card">
+    <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="form-group">
+            <label for="title"><i data-feather="edit"></i> Job Title</label>
+            <input type="text" id="title" name="title" class="form-control" value="{{ job.title if job else '' }}" required title="Enter job title">
+        </div>
+        <div class="form-grid-2">
+            <div class="form-group">
+                <label for="department"><i data-feather="grid"></i> Department</label>
+                <input type="text" id="department" name="department" list="department-list" class="form-control" value="{{ job.department if job else '' }}" required title="Select or enter department">
+                <datalist id="department-list">
+                    {% for dept in departments %}<option value="{{ dept }}">{% endfor %}
+                </datalist>
+            </div>
+            <div class="form-group">
+                <label for="location"><i data-feather="map-pin"></i> Location</label>
+                <input type="text" id="location" name="location" class="form-control" value="{{ job.location if job else '' }}" required title="Enter job location">
+            </div>
+        </div>
+        <div class="form-grid-2">
+            <div class="form-group">
+                <label for="job_type"><i data-feather="type"></i> Job Type</label>
+                <select id="job_type" name="job_type" class="form-control" title="Select job type">
+                    <option {% if job and job.job_type == 'Full-time' %}selected{% endif %}>Full-time</option>
+                    <option {% if job and job.job_type == 'Internship' %}selected{% endif %}>Internship</option>
+                    <option {% if job and job.job_type == 'Contract' %}selected{% endif %}>Contract</option>
+                </select>
+            </div>
+            {% if job %}
+            <div class="form-group">
+                <label for="status"><i data-feather="activity"></i> Status</label>
+                <select id="status" name="status" class="form-control" title="Select job status">
+                    <option {% if job.status == 'Open' %}selected{% endif %}>Open</option>
+                    <option {% if job.status == 'Closed' %}selected{% endif %}>Closed</option>
+                </select>
+            </div>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="description"><i data-feather="file-text"></i> Job Description</label>
+            <textarea id="description" name="description" class="form-control" rows="6" required title="Enter job description">{{ job.description if job else '' }}</textarea>
+        </div>
+        <div class="form-group">
+            <label for="requirements"><i data-feather="list"></i> Requirements</label>
+            <textarea id="requirements" name="requirements" class="form-control" rows="6" required title="Enter job requirements">{{ job.requirements if job else '' }}</textarea>
+        </div>
+        
+        <button type="submit" class="btn btn-primary"><i data-feather="save"></i> Save Job Posting</button>
+        <a href="{{ url_for('interviewer.manage_jobs') }}" class="btn btn-secondary"><i data-feather="x"></i> Cancel</a>
+    </form>
+</div>
+{% endblock %}

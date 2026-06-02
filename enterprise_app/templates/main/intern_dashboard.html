@@ -1,0 +1,101 @@
+{% extends "layouts/base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="recruiter-dashboard-page">
+    {% include 'layouts/_employee_welcome_header.html' %}
+
+    <div class="dashboard-stat-grid">
+        <div class="card stat-card">
+            <h4>Who's Out Today</h4>
+            <div class="stat-card-body">
+                {% if employees_on_leave %}
+                    <div class="leave-list-compact">
+                    {% for leave in employees_on_leave %}
+                        <span>{{ leave.employee_name }}</span>
+                    {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="stat-card-text">Everyone is in today.</p>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card stat-card">
+            <h4>Pending Leave Requests</h4>
+            <div class="stat-card-body">
+                <span class="stat-card-number">{{ pending_leave_count }}</span>
+                {% if pending_leave_count > 0 %}
+                    <a href="{{ url_for('interviewer.manage_leave') }}" class="stat-card-link">Review Requests &rarr;</a>
+                {% else %}
+                     <p class="stat-card-text">No pending requests.</p>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card stat-card">
+            <h4>New Applications</h4>
+            <div class="stat-card-body">
+                <span class="stat-card-number">{{ applied|length }}</span>
+                <p class="stat-card-text">Awaiting review.</p>
+            </div>
+        </div>
+        <div class="card stat-card">
+            <h4>Total Hires</h4>
+            <div class="stat-card-body">
+                <span class="stat-card-number">{{ total_hires }}</span>
+                <p class="stat-card-text">Successful placements.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="candidate-pipeline-container">
+        <div class="candidate-column">
+            <details class="accordion" open>
+                <summary><h3><span class="col-title">New Applications</span><span class="count">{{ applied|length }}</span></h3></summary>
+                <div class="accordion-content">
+                    {% for c in applied %}
+                    <a href="{{ url_for('interviewer.candidate_profile', applicant_id=c._id) }}" class="card-link">
+                        <div class="card candidate-card">
+                            <h4>{{ c.name }}</h4>
+                            <p><strong>Applied for:</strong> {{ c.role_applied_for }}</p>
+                            <div class="match-score">Score: <strong>{{ c.match_score if c.match_score > 0 else 'N/A' }}%</strong></div>
+                        </div>
+                    </a>
+                    {% else %}<p class="empty-column-text">No new applications.</p>{% endfor %}
+                </div>
+            </details>
+        </div>
+        <div class="candidate-column">
+            <details class="accordion" open>
+                <summary><h3><span class="col-title">Shortlisted</span><span class="count">{{ shortlisted|length }}</span></h3></summary>
+                <div class="accordion-content">
+                    {% for c in shortlisted %}
+                    <a href="{{ url_for('interviewer.candidate_profile', applicant_id=c._id) }}" class="card-link">
+                        <div class="card candidate-card">
+                            <h4>{{ c.name }}</h4>
+                            <p><strong>Applied for:</strong> {{ c.role_applied_for }}</p>
+                        </div>
+                    </a>
+                    {% else %}<p class="empty-column-text">No shortlisted candidates.</p>{% endfor %}
+                </div>
+            </details>
+        </div>
+        <div class="candidate-column">
+            <details class="accordion">
+                <summary><h3><span class="col-title">Upcoming Interviews</span><span class="count">{{ agenda|length }}</span></h3></summary>
+                <div class="accordion-content">
+                     {% for item in agenda %}
+                        {% for act in item.activity if act.type == 'interview' %}
+                        <a href="{{ url_for('interviewer.candidate_profile', applicant_id=item._id) }}" class="agenda-item card-link">
+                            <span class="agenda-time">{{ act.interview_date | format_datetime('%b %d') }}</span>
+                            <span class="agenda-title">{{ act.interview_type }} with <strong>{{ item.name }}</strong></span>
+                        </a>
+                        {% endfor %}
+                     {% else %}
+                    <p class="empty-column-text">No upcoming interviews.</p>
+                    {% endfor %}
+                </div>
+            </details>
+        </div>
+    </div>
+</div>
+{% endblock %}

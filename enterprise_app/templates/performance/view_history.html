@@ -1,0 +1,48 @@
+{% extends "layouts/base.html" %}
+{% block title %}My Performance History{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>My Performance Reviews</h1>
+
+    {% if reviews %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Cycle</th>
+                <th>Overall Rating</th>
+                <th>Skills</th>
+                <th>Teamwork</th>
+                <th>Goals Completed</th>
+                <th>Manager Feedback</th>
+                <th>Your Self-Feedback</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for review in reviews %}
+            <tr>
+                <td>{{ review.cycle }}</td>
+                <td>{{ review.ratings.overall|default('N/A') if review.ratings else 'N/A' }} / 5</td>
+                <td>{{ review.ratings.skills|default('N/A') if review.ratings else 'N/A' }} / 5</td>
+                <td>{{ review.ratings.teamwork|default('N/A') if review.ratings else 'N/A' }} / 5</td>
+                <td>
+                    {% set goals = review.goals|default([]) %}
+                    {{ goals|selectattr('status', 'equalto', 'Completed')|list|length }} / {{ goals|length }}
+                </td>
+                <td>{{ review.feedback|default('No feedback yet') }}</td>
+                <td>{{ review.self_feedback|default('No self-feedback') }}</td>
+                <td>{{ review.timestamp|format_datetime }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="8">No performance reviews yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="alert alert-info">No performance reviews yet. Keep up the great work!</p>
+    {% endif %}
+
+    <a href="{{ url_for('employee_portal.dashboard') }}" class="btn btn-primary">Back to Dashboard</a>
+</div>
+{% endblock %}

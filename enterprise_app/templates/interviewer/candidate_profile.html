@@ -1,0 +1,151 @@
+{% extends "layouts/base.html" %}
+{% block title %}Candidate Profile{% endblock %}
+{% block content %}
+<div class="profile-main-grid" role="main" aria-label="Candidate profile">
+    <div class="card">
+        <h2>{{ applicant.name }}</h2>
+        <p class="profile-subheading">Candidate Details</p>
+        <p><strong>Email:</strong> {{ applicant.email }}</p>
+        <p><strong>Role Applied For:</strong> {{ applicant.role_applied_for }}</p>
+        <p><strong>Predicted Category:</strong> {{ applicant.predicted_category if applicant.predicted_category else 'N/A' }}</p>
+        <p><strong>Category Fit Score:</strong> {{ applicant.get('category_fit_score') if applicant.get('category_fit_score') else 'N/A' }}%</p>
+        <p><strong>Match Score:</strong> {{ applicant.match_score if applicant.match_score > 0 else 'N/A' }}%</p>
+        <p><strong>Years of Experience:</strong> {{ applicant.years_of_experience if applicant.years_of_experience else 'N/A' }}</p>
+        <p><strong>Education:</strong> {{ applicant.education if applicant.education else 'N/A' }}</p>
+        <p><strong>Skills:</strong> {{ applicant.extracted_skills|join(', ') if applicant.extracted_skills else 'None detected' }}</p>
+        
+        <!-- NEW: Added for transparency / fairness explanation -->
+        <p><strong>Why this match score?</strong> 
+            {{ applicant.explanation if applicant.explanation else 'No detailed explanation available.' }}
+        </p>
+
+        <div class="tag-container">
+            {% if applicant.status %}
+            <span class="badge" style="background-color: {% if applicant.status == 'Applied' %}#007bff{% elif applicant.status == 'Shortlist' %}#17a2b8{% elif applicant.status == 'Hired' %}#28a745{% elif applicant.status == 'Rejected' %}#dc3545{% endif %}">{{ applicant.status }}</span>
+            {% endif %}
+        </div>
+        <a href="{{ url_for('interviewer.view_resume', applicant_id=applicant._id) }}" class="btn btn-primary" style="margin-right: 10px;">View Resume</a>
+        
+        <form action="{{ url_for('interviewer.generate_ai_interview', applicant_id=applicant._id) }}" method="POST" style="display:inline-block;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-outline-primary" style="border: 2px solid #2563eb; color: #2563eb; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; background: transparent;">
+                <i data-feather="cpu" style="width: 14px; height: 14px; margin-right: 4px;"></i> Trigger AI Interview
+            </button>
+        </form>
+
+        {% if applicant.ai_interview_score is defined and applicant.ai_interview_score is not none %}
+        <div style="margin-top: 25px; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; background-color: #f8fafc; border-top: 4px solid #2563eb;">
+            <h3 style="margin-top: 0; color: #0f172a; display: flex; align-items: center; gap: 8px;">
+                <i data-feather="cpu" style="width: 18px; height: 18px; color: #2563eb;"></i> AI Technical Screen Report
+            </h3>
+            <p><strong>Overall Competency Score:</strong> <span style="font-size: 1.25rem; color: #2563eb; font-weight: bold;">{{ applicant.ai_interview_score }}%</span></p>
+            
+            {% if applicant.ai_interview_strengths %}
+            <p style="margin-bottom: 5px; margin-top: 15px;"><strong>Strengths:</strong></p>
+            <ul style="margin: 0; padding-left: 20px; color: #1e293b; font-size: 0.95rem;">
+                {% for s in applicant.ai_interview_strengths %}
+                <li style="margin-bottom: 4px;">{{ s }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            
+            {% if applicant.ai_interview_weaknesses %}
+            <p style="margin-bottom: 5px; margin-top: 15px;"><strong>Areas for Growth:</strong></p>
+            <ul style="margin: 0; padding-left: 20px; color: #1e293b; font-size: 0.95rem;">
+                {% for w in applicant.ai_interview_weaknesses %}
+                <li style="margin-bottom: 4px;">{{ w }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            
+            {% if applicant.ai_interview_detailed_qa %}
+            <details style="margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+                <summary style="font-weight: 600; cursor: pointer; color: #475569; outline: none; font-size: 0.9rem;">View Question Breakdown ({{ applicant.ai_interview_detailed_qa|length }})</summary>
+                <div style="margin-top: 10px;">
+                    {% for item in applicant.ai_interview_detailed_qa %}
+                    <div style="margin-bottom: 12px; padding: 12px; border-radius: 8px; background: white; border: 1px solid #f1f5f9;">
+                        <p style="margin: 0 0 6px 0; font-size: 0.9rem; color: #0f172a; font-weight: 500;"><strong>Q:</strong> {{ item.q }}</p>
+                        <p style="margin: 0 0 6px 0; font-size: 0.9rem; color: #475569;"><strong>A:</strong> {{ item.a }}</p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: #94a3b8;">
+                            <span>Type: {{ item.type }}</span>
+                            <span style="font-weight: 600; color: #2563eb;">Score: {{ item.score }}/100</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </details>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+    <div class="card">
+        <div class="header-with-action">
+            <h2>Activity Log</h2>
+            <form action="{{ url_for('interviewer.add_activity', applicant_id=applicant._id) }}" method="post" class="dynamic-island" role="form" aria-label="Add activity form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="island-collapsed">
+                    <i data-feather="plus" aria-hidden="true"></i>
+                    <span>Add Activity</span>
+                </div>
+                <div class="island-expanded">
+                    <select name="action_type" class="form-control" required style="margin-bottom: 10px; font-size: 0.95rem;">
+                        <option value="" disabled selected>Select action</option>
+                        <option value="shortlist">Shortlist</option>
+                        <option value="comment">Add Comment</option>
+                        <option value="interview">Schedule Interview</option>
+                        <option value="hire">Hire</option>
+                        <option value="reject">Reject</option>
+                    </select>
+                    <div class="form-group" style="display: none;" id="comment-input">
+                        <textarea name="comment" class="form-control" placeholder="Enter comment" aria-label="Comment"></textarea>
+                    </div>
+                    <div class="form-group" style="display: none;" id="interview-date-input">
+                        <input type="datetime-local" name="interview_date" class="form-control" aria-label="Interview date">
+                    </div>
+                    <div class="island-actions">
+                        <button type="submit" class="island-button accept" aria-label="Submit action"><i data-feather="check" aria-hidden="true"></i></button>
+                        <button type="button" class="island-button decline" onclick="this.closest('.dynamic-island').blur();" aria-label="Cancel action"><i data-feather="x" aria-hidden="true"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="timeline" role="list" aria-label="Activity timeline">
+            {% for activity in applicant.activity %}
+            <div class="timeline-item" role="listitem">
+                <span class="timeline-icon timeline-icon-{{ activity.type }}" aria-hidden="true"></span>
+                <p class="timeline-author">{{ activity.author }}</p>
+                <p class="timeline-date">{{ activity.timestamp|format_datetime }}</p>
+                {% if activity.type == "application" %}
+                    <p>Applied for {{ applicant.role_applied_for }}</p>
+                {% elif activity.type == "shortlist" %}
+                    <p>Shortlisted for {{ applicant.role_applied_for }}</p>
+                {% elif activity.type == "comment" %}
+                    <p><strong>Comment:</strong> {{ activity.comment }}</p>
+                {% elif activity.type == "interview" %}
+                    <p><strong>Interview Scheduled:</strong> {{ activity.interview_date|format_datetime }}</p>
+                {% elif activity.type == "ai_interview_sent" %}
+                    <p><strong>AI Interview Delegated:</strong> Link attached for automated evaluation.</p>
+                {% elif activity.type == "ai_interview_completed" %}
+                    <p><strong>AI Interview Completed:</strong> {{ activity.message if activity.message else 'The AI Agent securely evaluated responses.' }}</p>
+                {% elif activity.type == "hire" %}
+                    <p><strong>Hired!</strong> Onboarding link: <a href="{{ activity.onboarding_link }}" target="_blank">Link</a></p>
+                {% elif activity.type == "reject" %}
+                    <p><strong>Rejected</strong></p>
+                {% endif %}
+            </div>
+            {% else %}
+            <p>No activities recorded.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<script>
+    const actionSelect = document.querySelector('select[name="action_type"]');
+    const commentInput = document.querySelector('#comment-input');
+    const interviewDateInput = document.querySelector('#interview-date-input');
+    actionSelect?.addEventListener('change', function() {
+        commentInput.style.display = this.value === 'comment' ? 'block' : 'none';
+        interviewDateInput.style.display = this.value === 'interview' ? 'block' : 'none';
+    });
+</script>
+{% endblock %}

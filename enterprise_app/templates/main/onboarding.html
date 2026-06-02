@@ -1,0 +1,17 @@
+{% extends "layouts/base.html" %}
+{% block title %}Onboarding Portal{% endblock %}
+{% block content %}
+<div class="card">
+    <h1>Welcome, {{ employee.name }}!</h1>
+    <p>Please upload your onboarding documents below (e.g., ID, certificates). Only PDFs allowed.</p>
+    <form action="{{ url_for('onboarding.upload_docs', applicant_id=employee._id) }}" method="post" enctype="multipart/form-data">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="token" value="{{ token }}">
+      <div class="form-group">
+        <label for="documents"><i data-feather="upload"></i> Upload Documents (you can select multiple):</label>
+        <input type="file" id="documents" name="documents" class="form-control-file" multiple required aria-required="true" title="Select PDF files to upload">
+      </div>
+      <button type="submit" class="btn btn-primary" title="Upload documents and complete onboarding"><i data-feather="check"></i> Upload and Complete Onboarding</button>
+    </form>
+</div>
+{% endblock %}

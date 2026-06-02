@@ -1,0 +1,31 @@
+{% extends "layouts/base.html" %}
+{# FIX: Update title to be more generic #}
+{% block title %}Upcoming Contract End Dates{% endblock %}
+{% block content %}
+<h1>Upcoming Contract End Dates</h1>
+<p>Showing all employees (interns and full-time) whose contracts end within the next 30 days.</p>
+<div class="card">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Employee Name</th>
+                <th>Role</th>
+                <th>Type</th>
+                <th>End Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for emp in employees %}
+            <tr>
+                <td><a href="{{ url_for('employee.profile', employee_id=emp._id) }}">{{ emp.name }}</a></td>
+                <td>{{ emp.role }}</td>
+                <td><span class="badge">{{ emp.employee_type }}</span></td>
+                <td>{{ emp.contract_end_date.strftime('%B %d, %Y') }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="4">No contracts are expiring soon.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

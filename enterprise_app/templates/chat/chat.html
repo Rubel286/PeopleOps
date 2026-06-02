@@ -1,0 +1,22 @@
+{% extends "layouts/base.html" %}
+{% block title %}AI Chat Assistant{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 800px; margin: 0 auto; height: 80vh; display: flex; flex-direction: column;">
+    <div style="padding-bottom: 20px; border-bottom: 1px solid #e5e7eb; margin-bottom: 20px;">
+        <h2>Enterprise AI Assistant</h2>
+        <p style="color: #6b7280; font-size: 0.9rem; margin:0;">Ask me about HR policies, candidate matching, payroll data, or appraisals.</p>
+    </div>
+    
+    <div id="chat-messages" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; padding-right: 15px;">
+        <div style="background: #f3f4f6; padding: 15px; border-radius: 8px; align-self: flex-start; max-width: 85%;">
+            Hi {{ current_user.name }}, I form the AI intelligence layer mapping this system. How can I assist you today?
+        </div>
+    </div>
+    
+    <div style="margin-top: 20px; display: flex; gap: 10px;">
+        <input type="text" id="chat-input" class="form-control" placeholder="Type your analysis query here..." style="flex: 1;">
+        <button id="chat-send" class="btn btn-primary" onclick="alert('Chat payload simulated safely.')"><i data-feather="send"></i> Send</button>
+    </div>
+</div>
+{% endblock %}

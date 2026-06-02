@@ -1,0 +1,65 @@
+<div class="welcome-header" data-aos="fade-in" 
+     data-employee-name="{{ employee.name or '' }}" 
+     data-employee-email="{{ employee.email or '' }}">
+    
+    <div class="welcome-greeting">
+        <h1 id="greeting">Loading...</h1>
+        <p id="date-time">Please wait...</p>
+    </div>
+
+    <!-- Dynamic Island REMOVED COMPLETELY -->
+
+    <div class="weather-widget">
+        <i data-feather="sun"></i>
+        <span>29°C Clear</span>
+    </div>
+</div>
+
+<div id="toast-container" class="toast-container"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    try {
+        const header = document.querySelector('.welcome-header');
+        const employeeName = header.dataset.employeeName.split(' ')[0];
+        const greetingEl = document.getElementById('greeting');
+        const dateTimeEl = document.getElementById('date-time');
+
+        function updateTime() {
+            const now = new Date();
+            const hour = now.getHours();
+            let greetingText = 'Good Morning';
+            if (hour >= 12) greetingText = 'Good Afternoon';
+            if (hour >= 17) greetingText = 'Good Evening';
+
+            greetingEl.textContent = `${greetingText}, ${employeeName}!`;
+            dateTimeEl.textContent = now.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        updateTime();
+        setInterval(updateTime, 60000);
+
+    } catch (error) {
+        console.error("An error occurred in the welcome header script:", error);
+    }
+});
+</script>
+
+<style>
+/* Toast container (unchanged) */
+.toast-container {
+    position: fixed;
+    top: 90px;
+    right: 20px;
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-end;
+}
+</style>

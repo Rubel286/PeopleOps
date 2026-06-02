@@ -1,0 +1,50 @@
+{% extends "layouts/base.html" %}
+{% from "macros/_pagination.html" import render_pagination %}
+{% block title %}Employee Directory{% endblock %}
+
+{% block content %}
+<h1>Employee Directory</h1>
+<p>Browse all employees currently at the company.</p>
+
+{% for department, employees in employees_by_dept.items() %}
+    <h2 class="department-header">{{ department }}</h2>
+    <div class="employee-grid">
+        {% for person in employees %}
+        <a href="{{ url_for('employee.profile', employee_id=person._id) }}" class="card-link">
+            <div class="card employee-card">
+
+                {% set gender = (person.gender or '') | lower | trim %}
+                <img
+                  src="{% if person.profile_image %}
+                           {{ url_for('static', filename=person.profile_image) }}
+                       {% elif gender == 'female' %}
+                           {{ url_for('static', filename='avatars/female.png') }}
+                       {% else %}
+                           {{ url_for('static', filename='avatars/male.png') }}
+                       {% endif %}"
+                  style="width:48px;height:48px;border-radius:50%;object-fit:cover;margin-bottom:8px;"
+                >
+
+                <h3>{{ person.name }}</h3>
+                <p>{{ person.role }}</p>
+                <div class="tag-container">
+                    {% if person.employee_type == 'Intern' %}
+                        <span class="badge badge-intern">Intern</span>
+                    {% endif %}
+                    {% if person.start_date > (now - timedelta(days=30)) %}
+                        <span class="badge badge-new-hire">New Hire</span>
+                    {% endif %}
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>No employees found in the directory.</p>
+{% endfor %}
+
+{% if total_pages > 1 %}
+    {{ render_pagination(page, total_pages, 'employee.directory') }}
+{% endif %}
+
+{% endblock %}

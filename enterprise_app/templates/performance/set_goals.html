@@ -1,0 +1,25 @@
+{% extends "layouts/base.html" %}
+{% block title %}Set Goals for {{ cycle }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Set Goals for Current Cycle: {{ cycle }}</h1>
+
+    <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div class="form-group">
+            <label for="goals">Enter your goals (one per line)</label>
+            <textarea id="goals" name="goals" class="form-control" rows="6" placeholder="e.g.\nComplete project X by end of quarter\nImprove code review response time\n...">
+{% for g in existing_goals %}{{ g.goal if g.goal else g }}
+{% endfor %}
+            </textarea>
+        </div>
+
+        <p class="text-muted">You can update these later. Progress will be tracked here.</p>
+
+        <button type="submit" class="btn btn-primary">Save Goals</button>
+        <a href="{{ url_for('employee_portal.dashboard') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "layouts/base.html" %}
+{% block title %}{{ employee.name }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>{{ employee.name }}</h1>
+    <p class="profile-subheading">{{ employee.role }} | <strong>{{ employee.department }}</strong></p>
+
+    <h3>Contact Information</h3>
+    <p><strong>Email:</strong> {{ employee.email }}</p>
+    <p><strong>Phone:</strong> {{ employee.phone_number }}</p>
+
+    <h3>Employment Details</h3>
+    <p><strong>Start Date:</strong> {{ employee.start_date.strftime('%B %d, %Y') }}</p>
+    
+    {% if employee.employee_type == 'Intern' and mentor %}
+    <p><strong>Mentor:</strong> <a href="{{ url_for('employee.profile', employee_id=mentor._id) }}">{{ mentor.name }}</a></p>
+    {% elif employee.mentor %}
+    <p><strong>Mentor:</strong> {{ employee.mentor }}</p>
+    {% endif %}
+
+    <!-- NEW: Admin can submit performance review from here -->
+    {% if current_user.role == 'admin' %}
+    <p>
+        <a href="{{ url_for('performance.submit_review', employee_id=employee._id) }}" 
+           class="btn btn-primary btn-sm">
+            <i data-feather="edit"></i> Submit Performance Review
+        </a>
+    </p>
+    {% endif %}
+    
+    <hr>
+
+    <h2>Activity Log</h2>
+    <div class="activity-log-list">
+        {% for log in logs %}
+        <details class="activity-item">
+            <summary>
+                <span class="activity-time">{{ log.timestamp.strftime('%b %d, %Y %H:%M') }} UTC</span>
+                <span class="activity-title">{{ log.action.replace('_', ' ')|title }}</span>
+                <span class="activity-preview">{{ log.details.document_name if log.details else '' }}</span>
+            </summary>
+            <div class="activity-details">
+                <h4>Log Details</h4>
+                <ul>
+                    <li><strong>Action:</strong> {{ log.action }}</li>
+                    <li><strong>Timestamp:</strong> {{ log.timestamp }}</li>
+                    <li><strong>User:</strong> {{ log.user_email }}</li>
+                    <li><strong>IP Address:</strong> {{ log.ip_address }}</li>
+                    {% if log.details.document_id %}
+                    <li><strong>Document ID:</strong> {{ log.details.document_id }}</li>
+                    {% endif %}
+                </ul>
+            </div>
+        </details>
+        {% else %}
+        <p>No activity has been recorded for this employee.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

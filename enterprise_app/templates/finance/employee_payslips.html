@@ -1,0 +1,63 @@
+{% extends "layouts/base.html" %}
+{% block title %}My Finance{% endblock %}
+
+{% block content %}
+
+<h1>My Finance Dashboard</h1>
+
+<h3>Year-to-date earnings: &#8377;{{ '{:,.2f}'.format(total_ytd) }}</h3>
+
+<hr>
+
+<h3>Payslips</h3>
+
+<table class="table">
+
+<tr>
+<th>Period</th>
+<th>Net Pay</th>
+<th>Download</th>
+</tr>
+
+{% for p in payslips %}
+
+<tr>
+
+<td>{{ p.period }}</td>
+
+<td>&#8377;{{ '{:,.2f}'.format(p.net_pay) }}</td>
+
+<td>
+
+<a href="/payroll/employee/payslip/{{ p._id }}">
+Download
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+<hr>
+
+<h3>Request Adjustment</h3>
+
+<form method="POST" action="{{ url_for('finance.request_adjustment') }}">
+
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+<input name="amount" placeholder="Amount">
+
+<input name="reason" placeholder="Reason">
+
+<button class="btn btn-primary">
+Submit
+</button>
+
+</form>
+
+
+{% endblock %}

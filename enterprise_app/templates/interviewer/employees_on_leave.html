@@ -1,0 +1,45 @@
+{% extends "layouts/base.html" %}
+{% block title %}Employees on Leave{% endblock %}
+
+{% block content %}
+<div class="header-with-action">
+    <div>
+        <h1>Employees Currently on Leave</h1>
+        <p style="margin:0; color: #6b7280;">Real-time tracker of workforce capacity.</p>
+    </div>
+    <a href="{{ url_for('interviewer.dashboard') }}" class="btn btn-outline-secondary">Back to Hub</a>
+</div>
+
+<div class="card">
+    <table class="table" style="width: 100%; border-collapse: collapse;">
+        <thead style="background: #f9fafb;">
+            <tr>
+                <th style="padding: 12px; text-align: left;">Employee Name</th>
+                <th style="padding: 12px; text-align: left;">Leave Period</th>
+                <th style="padding: 12px; text-align: left;">Reason</th>
+                <th style="padding: 12px; text-align: left;">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for emp in employees_on_leave %}
+            <tr style="border-bottom: 1px solid #e5e7eb;">
+                <td style="padding: 12px; font-weight: 500;">{{ emp.employee_name }}</td>
+                <td style="padding: 12px; font-family: monospace;">{{ emp.start_date.split('T')[0] }} to {{ emp.end_date.split('T')[0] }}</td>
+                <td style="padding: 12px; color: #6b7280;">{{ emp.reason }}</td>
+                <td style="padding: 12px;">
+                    <span class="badge" style="background: #10b981;">Active Leave</span>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" style="padding: 20px; text-align: center; color: #6b7280;">No employees are currently on leave today. All hands on deck!</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<style>
+.badge { padding: 4px 8px; border-radius: 4px; color: white; font-size: 0.8rem; font-weight: 500; }
+</style>
+{% endblock %}

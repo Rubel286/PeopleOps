@@ -1,0 +1,43 @@
+{% extends "layouts/base.html" %}
+{% block title %}Performance Dashboard (Admin){% endblock %}
+
+{% block content %}
+<h1>Performance Dashboard</h1>
+<p>Average Overall Rating: {{ avg_overall }} / 5</p>
+
+<div class="card">
+    <h2>Recent Reviews</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Employee</th>
+                <th>Cycle</th>
+                <th>Skills</th>
+                <th>Teamwork</th>
+                <th>Overall</th>
+                <th>Goals</th>
+                <th>Feedback</th>
+                <th>Submitted</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for review in reviews %}
+            <tr>
+                <td>{{ review.employee_name }}</td>
+                <td>{{ review.cycle }}</td>
+                <td>{{ review.skills }} / 5</td>          <!-- FIXED: review.skills -->
+                <td>{{ review.teamwork }} / 5</td>        <!-- FIXED: review.teamwork -->
+                <td>{{ review.overall }} / 5</td>         <!-- FIXED: review.overall -->
+                <td>{{ review.goals_count }} ({{ review.completed_goals }} completed)</td>
+                <td>{{ review.feedback }}</td>
+                <td>{{ review.timestamp | format_datetime }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="8">No reviews yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<a href="{{ url_for('employee.directory') }}" class="btn btn-primary">Back to Employee Directory</a>
+{% endblock %}
