@@ -85,7 +85,7 @@ def build_email(email_type: str, recipient: str, context: dict) -> Message:
                     
             e.begin = interview_date
             e.duration = datetime.timedelta(hours=1)
-            e.description = "Technical Interview via MainFrame Enterprise"
+            e.description = "Technical Interview via PeopleOps Enterprise"
             c.events.add(e)
             
             ics_content = str(c)

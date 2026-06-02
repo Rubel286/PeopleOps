@@ -18,7 +18,7 @@ if not os.path.exists(resumes_folder) and os.path.basename(current_dir) == "tool
 
 # Check if resumes folder exists
 if not os.path.exists(resumes_folder):
-    print("❌ Error: Please create a 'resumes' folder in the MainFrame_ENTERPRISE root folder.")
+    print("❌ Error: Please create a 'resumes' folder in the PeopleOps root folder.")
     sys.exit(1)
 
 # Get all PDF files inside resumes folder

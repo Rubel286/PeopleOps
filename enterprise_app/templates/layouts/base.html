@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}RecruitAI{% endblock %}</title>
+    <title>{% block title %}PeopleOps{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -28,7 +28,7 @@
     {% if current_user.is_authenticated and active_role in ['admin', 'employee'] %}
     <div class="dashboard-grid">
         <aside class="sidebar">
-            <a href="{{ url_for('main.index') }}" class="sidebar-brand">RecruitAI</a>
+            <a href="{{ url_for('main.index') }}" class="sidebar-brand">PeopleOps</a>
             <nav class="sidebar-nav">
                 {% if current_user.role == 'admin' %}
                     <a href="{{ url_for('interviewer.dashboard') }}"><i data-feather="home"></i> Dashboard</a>
@@ -131,7 +131,7 @@
     
     {% else %}
         <nav class="navbar">
-            <a class="nav-brand" href="{{ url_for('main.index') }}">RecruitAI</a>
+            <a class="nav-brand" href="{{ url_for('main.index') }}">PeopleOps</a>
             <div class="nav-links">
                 <a href="{{ url_for('main.job_listings') }}">Jobs</a>
                 <a href="{{ url_for('auth.login') }}">Login</a>

@@ -10,7 +10,7 @@ Generates a complete consolidated `.txt` file containing the source code (`.py`,
   ```bash
   python tools/codedump.py
   ```
-- **Output:** `Mainframe_code_dump_COMPLETE.txt` in the project root.
+- **Output:** `Peopleops_code_dump_COMPLETE.txt` in the project root.
 
 ### 2. Directory Tree Printer (`tree.py`)
 Prints a beautifully formatted directory tree of the project structure while automatically excluding heavy or irrelevant directories (such as virtual environments, cache folders, upload directories, and node modules).

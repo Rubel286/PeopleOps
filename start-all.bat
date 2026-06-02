@@ -1,5 +1,5 @@
 @echo off
-title RecruitAI - All Services (Redis + Celery + Flask)
+title PeopleOps - All Services (Redis + Celery + Flask)
 
 echo ================================================
 echo Starting Redis, Celery (SOLO), and Flask

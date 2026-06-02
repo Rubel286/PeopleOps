@@ -182,7 +182,7 @@ MAIL_PASSWORD="your-password"
 CELERY_BROKER_URL=redis://127.0.0.1:6379/0
 CELERY_RESULT_BACKEND=redis://127.0.0.1:6379/0
 
-GEMINI_API_KEY='your-key"
+GEMINI_API_KEY="your-key"
 ```
 
 ### 5️⃣ Start Redis
@@ -194,7 +194,7 @@ redis-server
 ### 6️⃣ Database Initialization
 
 ```bash
-flask seed-db
+flask --app manage.py seed-db
 ```
 
 Optional setup commands:
@@ -227,8 +227,6 @@ Start Flask Application:
 python run.py
 ```
 
----
-
 ## Access the Application
 
 Open your browser and navigate to:
@@ -236,6 +234,21 @@ Open your browser and navigate to:
 ```text
 http://127.0.0.1:5000
 ```
+
+## Default Login Credentials
+
+After running `flask --app manage.py seed-db`, you can immediately log in to the portal using these default testing accounts.
+
+### Administrative / Recruiter Access
+
+- **Email:** `admin@peopleops.dev`
+- **Password:** `admin`
+
+### Employee Portal Access
+
+- **Email:** `[first_name].[last_name]@peopleops.dev`
+  - Example: `aravind.swamy@peopleops.dev`
+- **Password:** `password`
 
 ---
 
@@ -268,3 +281,11 @@ This project uses Google Gemini API.
 Get your API key from:
 
 https://aistudio.google.com/app/apikey
+
+---
+
+## License
+
+This project is licensed under the MIT License.
+
+See the LICENSE file for details.

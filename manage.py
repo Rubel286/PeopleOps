@@ -66,9 +66,9 @@ def seed_db():
             mongo.db[collection].delete_many({})
 
         # 2. Create Admin User
-        click.echo("Creating admin user (admin@recruitai.dev)...")
+        click.echo("Creating admin user (admin@peopleops.dev)...")
         mongo.db.users.insert_one({
-            "email": "admin@recruitai.dev", "name": "System Administrator",
+            "email": "admin@peopleops.dev", "name": "System Administrator",
             "password_hash": generate_password_hash("admin"), "role": "admin"
         })
 
@@ -106,7 +106,7 @@ def seed_db():
             clean_name = name.replace(' ', '.').replace('Mr.', '').replace('Ms.', '').replace('Mrs.', '').strip().lower()
             # Ensure email doesn't have duplicate dots or artifacts
             clean_name = ''.join([c for c in clean_name if c.isalnum() or c == '.']).strip('.')
-            email = f"{clean_name}@recruitai.dev"
+            email = f"{clean_name}@peopleops.dev"
             
             start_date = fake_in.date_time_between(start_date=datetime(2021, 1, 1), end_date=datetime(2025, 8, 1))
             
@@ -178,7 +178,7 @@ def seed_db():
         for m in [1, 2, 3]: # Last 3 months
             period = f"2026-0{m}"
             run_id = mongo.db.payroll_runs.insert_one({
-                "period": period, "status": "completed", "created_by": "admin@recruitai.dev",
+                "period": period, "status": "completed", "created_by": "admin@peopleops.dev",
                 "created_at": datetime(2026, m, 28), "dry_run": False, "employee_count": len(full_time_employees),
                 "total_payout": 0
             }).inserted_id
@@ -192,7 +192,7 @@ def seed_db():
                 tasks.append({
                     "title": f"Project: {title}",
                     "description": fake_in.text(max_nb_chars=120),
-                    "assigner_email": "admin@recruitai.dev",
+                    "assigner_email": "admin@peopleops.dev",
                     "assignee_email": emp["email"],
                     "status": status,
                     "due_date": datetime.utcnow() + timedelta(days=random.randint(2, 14)),
@@ -265,6 +265,18 @@ def seed_db():
         if grievances: mongo.db.grievances.insert_many(grievances)
 
         click.secho("Database seeding completed successfully with explicit Indian Telemetry profiles natively instantiated!", fg="green")
+
+        # Automatically execute alignment, augmentation, and gender fix for UI optimization
+        click.secho("\nExecuting automated database schema alignment for UI tracking...", fg="yellow")
+        db_align()
+        
+        click.secho("Executing automated telemetry augmentation (Leaves, Appraisals, Grievances)...", fg="yellow")
+        db_augment()
+        
+        click.secho("Executing automated gender cleanup/detection...", fg="yellow")
+        db_fix_gender()
+
+        click.secho("\nPeopleOps Database is fully loaded, aligned, and ready for launch!", fg="green")
 
     except Exception as e:
         click.secho(f"Error during seeding: {str(e)}", fg="red")
@@ -384,7 +396,7 @@ def db_augment():
         mongo.db.performance_reviews.insert_one({
             "employee_id": emp.get("email"),
             "employee_name": emp.get("name"),
-            "reviewer_email": "admin@recruitai.dev",
+            "reviewer_email": "admin@peopleops.dev",
             "status": "Completed", 
             "summary": "Consistently exceeds expectation margins during crunch time.",
             "metrics": {"code_quality": 5, "teamwork": 4, "communication": 5, "delivery": 4},

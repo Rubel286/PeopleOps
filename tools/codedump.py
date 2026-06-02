@@ -1,6 +1,6 @@
 import os
 
-OUTPUT_FILE = "../Mainframe_code_dump_COMPLETE.txt"
+OUTPUT_FILE = "../Peopleops_code_dump_COMPLETE.txt"
 
 EXCLUDE_DIRS = {
     ".git", ".vs", "__pycache__", "venv", "env", "node_modules",
@@ -36,7 +36,7 @@ def should_exclude_file(path: str) -> bool:
 def dump_files(root_dir: str):
 
     # Adjust path if running from inside the tools/ folder
-    output_path = os.path.join(root_dir, "Mainframe_code_dump_COMPLETE.txt")
+    output_path = os.path.join(root_dir, "Peopleops_code_dump_COMPLETE.txt")
 
     with open(output_path, "w", encoding="utf-8", errors="ignore") as out:
 
