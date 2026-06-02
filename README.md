@@ -197,14 +197,6 @@ redis-server
 flask --app manage.py seed-db
 ```
 
-Optional setup commands:
-
-```bash
-flask db-augment
-flask db-align
-flask db-fix-gender
-```
-
 ### 7️⃣ Run the Application
 
 #### Quick Start (Windows)
