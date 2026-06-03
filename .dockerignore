@@ -1,0 +1,14 @@
+venv_enterprise/
+venv/
+.env
+.git/
+.gitignore
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.db/
+mail_output/
+uploads/
+*.log
+.gemini/
