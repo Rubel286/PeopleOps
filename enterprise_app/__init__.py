@@ -37,9 +37,22 @@ def format_datetime_filter(value, format='%b %d, %Y at %I:%M %p'):
     return dt_object.strftime(format)
 
 
+from urllib.parse import urlparse, urlunparse
+
 def create_app(config_class):
     app = Flask(__name__)
     app.config.from_object(config_class)
+
+    # Ensure MONGO_URI has a database name to prevent mongo.db from being None
+    mongo_uri = app.config.get("MONGO_URI")
+    if mongo_uri:
+        try:
+            parsed = urlparse(mongo_uri)
+            if not parsed.path or parsed.path == '/':
+                parsed = parsed._replace(path='/recruitmentDB')
+                app.config["MONGO_URI"] = urlunparse(parsed)
+        except Exception:
+            pass
 
     mongo.init_app(app)
     login_manager.init_app(app)
