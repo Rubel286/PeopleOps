@@ -59,6 +59,14 @@ def create_app(config_class):
     mail.init_app(app)
     csrf.init_app(app)
 
+    # Adjust session cookie security for local development vs production iframe hosting
+    if app.config.get("DEBUG"):
+        app.config["SESSION_COOKIE_SECURE"] = False
+        app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+    else:
+        app.config["SESSION_COOKIE_SECURE"] = True
+        app.config["SESSION_COOKIE_SAMESITE"] = "None"
+
     # Force synchronous execution for testing to ensure instant emails
     app.config['CELERY_TASK_ALWAYS_EAGER'] = True
     celery.conf.update(app.config)

@@ -268,13 +268,13 @@ def seed_db():
 
         # Automatically execute alignment, augmentation, and gender fix for UI optimization
         click.secho("\nExecuting automated database schema alignment for UI tracking...", fg="yellow")
-        db_align()
+        db_align.callback()
         
         click.secho("Executing automated telemetry augmentation (Leaves, Appraisals, Grievances)...", fg="yellow")
-        db_augment()
+        db_augment.callback()
         
         click.secho("Executing automated gender cleanup/detection...", fg="yellow")
-        db_fix_gender()
+        db_fix_gender.callback()
 
         click.secho("\nPeopleOps Database is fully loaded, aligned, and ready for launch!", fg="green")
 
